@@ -1,5 +1,5 @@
 import React from 'react'
-import { SafeAreaView, ActivityIndicator, Button, Image, TouchableOpacity, StyleSheet, Text, TextInput, View, Alert } from 'react-native';
+import { SafeAreaView, AsyncStorage, ActivityIndicator, Button, Image, TouchableOpacity, StyleSheet, Text, TextInput, View, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Logo from "../../assets/logo/logo2.png";
 import tw from 'twrnc';
@@ -59,6 +59,26 @@ const Authentication = () => {
         try {
             if (loginPage) {
                 let salonUser = await auth().signInWithEmailAndPassword(loginForm.emailId.toLowerCase(), loginForm.password);
+                await firestore()
+                    .collection('Users').where('emailId', '==', salonUser.user.email).get()
+                    .then(async (userData) => {
+                        console.log(userData.docs[0]._data);
+                        try {
+                            await AsyncStorage.setItem(
+                              'anuj',
+                              'I like to save it.',
+                            );
+
+                            const value = await AsyncStorage.getItem('anuj');
+                            console.log("Value" + value);
+                          } catch (error) {
+                            // Error saving data
+                          }
+                    })
+
+                setLoading(false);
+                return;
+
                 setLoading(false);
                 return;
             } else {
@@ -73,10 +93,11 @@ const Authentication = () => {
                     .then(() => {
                         console.log('User added!');
                     });
-                    setLoading(false);
-                    return;
+                setLoading(false);
+                return;
             }
         } catch (error) {
+            console.log(error);
             if (error.code === 'auth/email-already-in-use') {
                 // console.log('That email address is already in use!');
             }
@@ -146,19 +167,19 @@ const Authentication = () => {
                     style={tw`bg-current`}
                     disabled={loading ? true : false}
                 /> */}
- <TouchableOpacity onPress={handleAuthentication}>
-        <View
-          style={{
-            ...styles.button,
-            backgroundColor: loading ? "#4caf50" : "#8bc34a",
-          }}
-        >
-          {loading && <ActivityIndicator size="large" color="yellow" />}
-          <Text style={styles.buttonText}>
-            {loginPage ? "Login" : "Sign Up"}
-          </Text>
-        </View>
-      </TouchableOpacity>
+                <TouchableOpacity onPress={handleAuthentication}>
+                    <View
+                        style={{
+                            ...styles.button,
+                            backgroundColor: loading ? "#4caf50" : "#8bc34a",
+                        }}
+                    >
+                        {loading && <ActivityIndicator size="large" color="yellow" />}
+                        <Text style={styles.buttonText}>
+                            {loginPage ? "Login" : "Sign Up"}
+                        </Text>
+                    </View>
+                </TouchableOpacity>
             </View>
             <View style={tw`mt-3`}>
                 <Text
@@ -170,8 +191,8 @@ const Authentication = () => {
                 </Text>
             </View>
             <View style={styles.container}>
-     
-    </View>
+
+            </View>
         </SafeAreaView>
     )
 }
@@ -197,12 +218,12 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "#666",
         borderRadius: 10,
-      },
-      buttonText: {
+    },
+    buttonText: {
         color: "#fff",
         fontWeight: "bold",
         fontSize: 20
-      },
+    },
 });
 
 export default Authentication

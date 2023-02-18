@@ -24,7 +24,6 @@ const Authentication = () => {
     const [number, onChangeNumber] = React.useState('');
 
     const handleFormChange = (e, fieldName) => {
-        console.log(e);
         setLoginForm((prevValue) => {
             return {
                 ...prevValue,
@@ -59,23 +58,6 @@ const Authentication = () => {
         try {
             if (loginPage) {
                 let salonUser = await auth().signInWithEmailAndPassword(loginForm.emailId.toLowerCase(), loginForm.password);
-                await firestore()
-                    .collection('Users').where('emailId', '==', salonUser.user.email).get()
-                    .then(async (userData) => {
-                        console.log(userData.docs[0]._data);
-                        try {
-                            await AsyncStorage.setItem(
-                              'anuj',
-                              'I like to save it.',
-                            );
-
-                            const value = await AsyncStorage.getItem('anuj');
-                            console.log("Value" + value);
-                          } catch (error) {
-                            // Error saving data
-                          }
-                    })
-
                 setLoading(false);
                 return;
 
@@ -89,6 +71,7 @@ const Authentication = () => {
                     .add({
                         emailId: salonUser.user.email,
                         userName: loginForm.userName,
+                        role: "",
                     })
                     .then(() => {
                         console.log('User added!');
@@ -100,6 +83,7 @@ const Authentication = () => {
             console.log(error);
             if (error.code === 'auth/email-already-in-use') {
                 // console.log('That email address is already in use!');
+                Alert.alert("Error", "You have already registered please login")
             }
 
             if (error.code === 'auth/invalid-email') {

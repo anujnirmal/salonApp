@@ -2,11 +2,13 @@ import React, {useEffect, useState} from 'react'
 import { View, Text, Pressable, StyleSheet, ScrollView, Button } from 'react-native'
 import tw from 'twrnc';
 import CheckBox from '@react-native-community/checkbox';
+import ItemCheckout from '../../components/ItemCheckedOut/ItemCheckout';
 
 const BookService = ({selectedShop}) => {
     const [selectedItem, setSelectedItem] = useState([])
     const [checkBox, setCheckBox] = useState()
     const [price, setPrice] = useState(0);
+    const [itemCheckOut, setItemCheckOut] = useState(false);
 
     useEffect(() => {
         for (let i = 0; i < selectedShop?.services?.length; i++) {
@@ -21,7 +23,24 @@ const BookService = ({selectedShop}) => {
  
     const handleItemSelect = (service) => {
 
-        // let tempSelectedItems = selectedItem;
+        let found = false;
+
+        console.log(checkBox)
+
+        for (let i = 0; i < checkBox.length; i++) {           
+            if(selectedItem[i][service.id] === true){
+                        console.log("Inside");
+                        found = true;
+                        return;
+            }
+        }
+
+        console.log(found)
+
+        if(found === true) {
+            return;
+        }
+      
         let itemFound = 0;
         // console.log("Temp" + JSON.stringify(tempSelectedItems))
         
@@ -66,14 +85,22 @@ const BookService = ({selectedShop}) => {
     }
 
   return (
-   
+   <>
+   {itemCheckOut ?
+   <ItemCheckout itemsList={selectedItem} price={price}/>
+:
+
+
     <View style={tw`w-full h-full`}>
         <View>
             <Text style={tw`text-center mt-8 text-lg text-white`}>Choose service</Text>
         </View>
         <View style={tw`absolute bottom-0 w-full h-15 flex items-center justify-center bg-sky-500`}>
-            <Pressable><Text style={tw`text-white text-[4]`}>Checkout {selectedItem.length} items, Total: Rs. 
-            {price}
+            <Pressable onPress={() => {
+                console.log("HHEHEH " + selectedItem);                
+                setItemCheckOut(true)
+
+   }}><Text style={tw`text-white text-[4]`}>Checkout items
             </Text></Pressable>
         </View>
         <ScrollView style={tw`mt-5 mb-16`}>
@@ -101,8 +128,10 @@ const BookService = ({selectedShop}) => {
            })}
 
         </ScrollView>
-        
+    
     </View>
+}
+   </>
 
 
   )

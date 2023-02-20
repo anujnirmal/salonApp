@@ -108,7 +108,7 @@ const UserDashboard = ({ userData }) => {
                 />
 
             </View>
-            <View style={tw`w-100`}>
+            <View style={tw`w-60`}>
                 <View style={tw`mb-4`}>
                     <Pressable style={styles.button} >
                         <Text style={styles.text}>Profile</Text>

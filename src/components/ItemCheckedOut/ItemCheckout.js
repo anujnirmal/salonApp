@@ -1,33 +1,31 @@
 import React from 'react'
 import tw from 'twrnc';
 import CheckBox from '@react-native-community/checkbox';
-import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native'
+import { View, Text, ScrollView, StyleSheet, Pressable, Button } from 'react-native'
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
+import DatePicker from 'react-native-date-picker'
+
 
 
 const ItemCheckout = ({ itemsList, price }) => {
     const [selectedDate, setSelectedDate] = React.useState(
-        new Date().getFullYear() + "-0" + (parseInt(new Date().getMonth()) + 1) + "-" + new Date().getDate() 
+        new Date().getFullYear() + "-0" + (parseInt(new Date().getMonth()) + 1) + "-" + new Date().getDate()
     );
-    console.log("Items " + itemsList)
-    console.log(new Date());   
-    console.log(selectedDate) 
-    let minDate =  new Date().getFullYear() + "-0" + (parseInt(new Date().getMonth()) + 1) + "-" + new Date().getDate();
-    return (
-        <View style={tw`w-100 h-50`}>
-            <Text style={tw`text-[6] text-center mt-6 text-white`}>Items Selected</Text>
-            <View style={tw`absolute bottom-0 w-full h-15 flex items-center justify-center bg-sky-500`}>
-                <Pressable onPress={() => {
-                    console.log("HHEHEH " + selectedItem);
-                    setItemCheckOut(true)
+    const [date, setDate] = React.useState(new Date("2023-02-20"))
+    const [openDatePicker, setOpenDatePicker] = React.useState(false)
 
-                }}><Text style={tw`text-white text-[4]`}>Confirm, Total: Rs. {price}
-                    </Text></Pressable>
-            </View>
-            <View style={tw`w-full h-full`}>
+    console.log("Items " + new Date());
+    console.log(new Date());
+    console.log(selectedDate)
+    let minDate = new Date().getFullYear() + "-0" + (parseInt(new Date().getMonth()) + 1) + "-" + new Date().getDate();
+    return (
+        <View style={tw`w-100 h-full `}>
+            <Text style={tw`text-[6] text-center mt-6 text-white`}>Choose Date & Time</Text>
+
+            <View style={tw`w-full h-1 mt-5`}>
                 <Calendar
                     // Initially visible month. Default = now
-                    initialDate={'2023-02-19'}
+                    //initialDate={'2023-02-19'}
                     // Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined
                     minDate={minDate}
                     // // Maximum date that can be selected, dates after maxDate will be grayed out. Default = undefined
@@ -48,7 +46,7 @@ const ItemCheckout = ({ itemsList, price }) => {
                     onMonthChange={month => {
                         console.log('month changed', month);
                     }}
-                    
+
                     // Hide month navigation arrows. Default = false
                     // hideArrows={true}
                     // Replace default arrows with custom ones (direction can be 'left' or 'right')
@@ -81,11 +79,28 @@ const ItemCheckout = ({ itemsList, price }) => {
                     // Enable the option to swipe between months. Default = false
                     enableSwipeMonths={true}
                     markedDates={{
-                        [selectedDate] : {selected: true, marked: true, selectedColor: 'blue'}
+                        [selectedDate]: { selected: true, marked: true, selectedColor: 'blue' }
                     }}
                 />
             </View>
-            <ScrollView style={tw`mt-100 mb-16`}>
+                    <View style={tw`w-full h-full`}>
+                    <DatePicker
+                modal
+                open={true}
+                date={date}
+                onConfirm={(date) => {
+                    setOpenDatePicker(false)
+                    setDate(date)
+                }}
+                onCancel={() => {
+                    setOpenDatePicker(false)
+                }}
+            />
+            <Button title="Open" onPress={() => setOpenDatePicker(true)} />
+                    </View>
+            
+
+            {/* <ScrollView style={tw`mt-80 mb-16`}>
 
                 {itemsList?.map((item, index) => {
                     return <View style={styles.modalView} key={index}>
@@ -121,7 +136,16 @@ const ItemCheckout = ({ itemsList, price }) => {
                     </View>
                 })}
 
-            </ScrollView>
+            </ScrollView> */}
+
+            <View style={tw`absolute bottom-0 w-full h-15 flex items-center justify-center bg-sky-500`}>
+                <Pressable onPress={() => {
+                    console.log("HHEHEH " + selectedItem);
+                    setItemCheckOut(true)
+
+                }}><Text style={tw`text-white text-[4]`}>Confirm Date
+                    </Text></Pressable>
+            </View>
         </View>
     )
 }

@@ -90,9 +90,7 @@ const UserDashboard = ({ userData }) => {
         setModalVisible(false);
         setBookService(true);
     }
-
-
-
+    
     const navigationView = () => (
         <View style={[styles.container, styles.navigationContainer]}>
             {/* Add Image */}
@@ -110,7 +108,9 @@ const UserDashboard = ({ userData }) => {
             </View>
             <View style={tw`w-60`}>
                 <View style={tw`mb-4`}>
-                    <Pressable style={styles.button} >
+                    <Pressable style={styles.button} onPress={()=>{
+                        console.log("hiiiiiiiiii")
+                    }} >
                         <Text style={styles.text}>Profile</Text>
                     </Pressable>
                 </View>

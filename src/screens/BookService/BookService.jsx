@@ -99,12 +99,12 @@ const BookService = ({ selectedShop }) => {
                     <View style={tw`absolute bottom-0 w-full h-15 flex items-center justify-center bg-sky-500`}>
                         <Pressable onPress={() => {
                             if(selectedItem.length === 0){
-                                Alert.alert("Info", "Please select atleast one service");
+                                Alert.alert("Please select atleast one service");
                                 return
                             }
                             setItemCheckOut(true)
 
-                        }}><Text style={tw`text-white text-[4]`}>Checkout {selectedItem.length} items, Total: Rs. {price}</Text></Pressable>
+                        }}><Text style={tw`text-white text-[5]`}>Checkout {selectedItem.length} items, Total: Rs. {price}</Text></Pressable>
                     </View>
                     <ScrollView style={tw`mt-5 mb-16`}>
 

@@ -1,28 +1,69 @@
-import React from 'react'
+import React, { useState } from 'react';
 import tw from 'twrnc';
 import CheckBox from '@react-native-community/checkbox';
-import { View, Text, ScrollView, StyleSheet, Pressable, Button } from 'react-native'
+import { View, Text, ScrollView, StyleSheet, Pressable, Button, Alert } from 'react-native'
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
-import DatePicker from 'react-native-date-picker'
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import ConfirmScreen from './ConfirmScreen';
+
 
 
 
 const ItemCheckout = ({ itemsList, price }) => {
+    const [confirmScreen, setConfirmScreen] = useState(false);
+
+
+    const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
+    const [selectedTime,setSelectedTime] = useState('Select Time')
+    
+    const showTimePicker = () => {
+        setTimePickerVisibility(true);
+    };
+
+    const hideTimePicker = () => {
+        setTimePickerVisibility(false);
+    };
+
+    const handleTimeConfirm = (time) => {
+        console.warn("A time has been picked: ", time);
+        const currentTime= new Date(time);
+        const x= currentTime.toLocaleTimeString();
+        console.log("SelectedTime "+x);
+        setSelectedTime(x);
+        hideTimePicker();
+    };
+
     const [selectedDate, setSelectedDate] = React.useState(
         new Date().getFullYear() + "-0" + (parseInt(new Date().getMonth()) + 1) + "-" + new Date().getDate()
     );
     const [date, setDate] = React.useState(new Date("2023-02-20"))
-    const [openDatePicker, setOpenDatePicker] = React.useState(false)
+    // const [openDatePicker, setOpenDatePicker] = React.useState(false)
 
     console.log("Items " + new Date());
     console.log(new Date());
-    console.log(selectedDate)
+    console.log('date ' +selectedDate)
     let minDate = new Date().getFullYear() + "-0" + (parseInt(new Date().getMonth()) + 1) + "-" + new Date().getDate();
-    return (
-        <View style={tw`w-100 h-full `}>
-            <Text style={tw`text-[6] text-center mt-6 text-white`}>Choose Date & Time</Text>
 
-            <View style={tw`w-full h-1 mt-5`}>
+    return (
+        <>
+        {confirmScreen ?
+            <ConfirmScreen dateTime={selectedTime} />
+            :
+            <View style={tw`w-100 h-full `}>
+            <Text style={tw`text-[6] text-center mt-6 text-white`}>Choose Date & Time</Text>
+            
+           
+            <View style={tw`w-60 mt-8 mb-2	self-center	justify-center	`}>
+                <Button title={selectedTime} onPress={showTimePicker} />
+                <DateTimePickerModal
+                    isVisible={isTimePickerVisible}
+                    mode="time"
+                    onConfirm={handleTimeConfirm}
+                    onCancel={hideTimePicker}
+                />
+            </View>
+
+            <View style={tw`w-full h-1`}>
                 <Calendar
                     // Initially visible month. Default = now
                     //initialDate={'2023-02-19'}
@@ -83,22 +124,8 @@ const ItemCheckout = ({ itemsList, price }) => {
                     }}
                 />
             </View>
-                    <View style={tw`w-full h-full`}>
-                    <DatePicker
-                modal
-                open={true}
-                date={date}
-                onConfirm={(date) => {
-                    setOpenDatePicker(false)
-                    setDate(date)
-                }}
-                onCancel={() => {
-                    setOpenDatePicker(false)
-                }}
-            />
-            <Button title="Open" onPress={() => setOpenDatePicker(true)} />
-                    </View>
             
+
 
             {/* <ScrollView style={tw`mt-80 mb-16`}>
 
@@ -140,13 +167,20 @@ const ItemCheckout = ({ itemsList, price }) => {
 
             <View style={tw`absolute bottom-0 w-full h-15 flex items-center justify-center bg-sky-500`}>
                 <Pressable onPress={() => {
-                    console.log("HHEHEH " + selectedItem);
-                    setItemCheckOut(true)
+                    if(selectedTime === "Select Time"){
+                        // alert if time is not selected
+                        Alert.alert("Please select Time");
+                        return
+                    }
+                    console.log("hiii " + selectedTime);
+                    setConfirmScreen(true)
 
-                }}><Text style={tw`text-white text-[4]`}>Confirm Date
+                }}><Text style={tw`text-white text-[5]`}>Confirm Date & time
                     </Text></Pressable>
             </View>
         </View>
+}
+        </>
     )
 }
 

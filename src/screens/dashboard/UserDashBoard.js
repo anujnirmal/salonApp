@@ -17,7 +17,7 @@ import {
     Image
 }
     from 'react-native';
-import Scissor from "../../assets/scissor.png";
+//import Scissor from "../../assets/scissor.png";
 import BookService from '../BookService/BookService';
 
 const UserDashboard = ({ userData }) => {

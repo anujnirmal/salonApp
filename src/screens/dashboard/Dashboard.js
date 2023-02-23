@@ -4,8 +4,9 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import SelectRole from '../selectRole/SelectRole';
 import UserDashboard from './UserDashBoard';
+import OwnerDashboard from "./OwnerDashboard";
 
-const Dashboard = ({ user }) => {
+const Dashboard = ({ user,  }) => {
 
   const [userData, setUserData] = React.useState({});
   const [userType, setUserType] = React.useState(null);
@@ -35,10 +36,9 @@ const Dashboard = ({ user }) => {
     } catch (error) {
       console.log(error);
     }
+
+  
   }
-
-  console.log(userData)
-
 
 
   return (
@@ -55,10 +55,7 @@ const Dashboard = ({ user }) => {
 
       {userType === "SHOPOWNER" &&
         <>
-          <View>
-            <Text>Welcome shop owner {user.email}</Text>
-            <Button onPress={handleLogOut} title='Sign Out' />
-          </View>
+          <OwnerDashboard userData={userData}/>
         </>
       }
       </>

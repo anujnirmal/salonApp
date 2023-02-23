@@ -15,13 +15,12 @@ const Authentication = () => {
         emailId: "",
         password: "",
         confirmPassword: "",
+        phoneNumber: "",
     });
 
     const [loading, setLoading] = React.useState(false);
 
     const [loginPage, setLoginpage] = React.useState(true);
-
-    const [number, onChangeNumber] = React.useState('');
 
     const handleFormChange = (e, fieldName) => {
         setLoginForm((prevValue) => {
@@ -107,40 +106,65 @@ const Authentication = () => {
 
     return (
         <SafeAreaView>
-            <View>
 
-                <Text style={tw`text-center text-[14]`}>{loginPage ? "Login" : "Sign Up"}</Text>
+            <Image
+                style={styles.ImgLogo}
+                source={require('../../assets/logo/logo.png')}
+            />
+
+            <Text style={tw`text-center text-[12]`}>{loginPage ? "Login" : "Sign Up"}</Text>
+            <View style={tw`mt-10 `}>
+
                 {loginPage ? null :
-                    <TextInput
-                        style={styles.input}
-                        onChangeText={(e) => handleFormChange(e, "userName")}
-                        value={loginForm.userName}
-                        placeholder="username"
-                    />
+                    <View style={styles.inputView}>
+                        <TextInput
+                            style={styles.inputText}
+                            onChangeText={(e) => handleFormChange(e, "userName")}
+                            value={loginForm.userName}
+                            placeholder="username"
+                        />
+                    </View>
                 }
-                <TextInput
-                    style={styles.input}
-                    onChangeText={(e) => handleFormChange(e, "emailId")}
-                    value={loginForm.emailId}
-                    placeholder="email id"
-                />
-                <TextInput
-                    style={styles.input}
-                    onChangeText={(e) => handleFormChange(e, "password")}
-                    value={loginForm.password}
-                    placeholder="password"
-                    type={"password"}
-                    secureTextEntry={true}
-                />
-                {loginPage ? null :
+                <View style={styles.inputView}>
                     <TextInput
-                        style={styles.input}
-                        onChangeText={(e) => handleFormChange(e, "confirmPassword")}
-                        value={loginForm.confirmPassword}
-                        placeholder="confirm password"
+                        style={styles.inputText}
+                        onChangeText={(e) => handleFormChange(e, "emailId")}
+                        value={loginForm.emailId}
+                        placeholder="email id"
+                    />
+                </View>
+                <View style={styles.inputView}>
+                    <TextInput
+                        style={styles.inputText}
+                        onChangeText={(e) => handleFormChange(e, "password")}
+                        value={loginForm.password}
+                        placeholder="password"
                         type={"password"}
                         secureTextEntry={true}
                     />
+                </View>
+                {loginPage ? null :
+                    <View style={styles.inputView}>
+                        <TextInput
+                            style={styles.inputText}
+                            onChangeText={(e) => handleFormChange(e, "confirmPassword")}
+                            value={loginForm.confirmPassword}
+                            placeholder="confirm password"
+                            type={"password"}
+                            secureTextEntry={true}
+                        />
+                    </View>
+                }
+                {loginPage ? null :
+                    <View style={styles.inputView}>
+                        <TextInput
+                            style={styles.inputText}
+                            onChangeText={(e) => handleFormChange(e, "phoneNumber")}
+                            value={loginForm.phoneNumber}
+                            placeholder="phone no."
+                            type={"phone"}
+                        />
+                    </View>
                 }
             </View>
 
@@ -171,11 +195,8 @@ const Authentication = () => {
                     style={tw`text-center text-[4] text-gray-400`}
                     disabled={loading ? true : false}
                 >
-                    {loginPage ? "Sign Up" : "Login"}
+                    {loginPage ? "Dont't have an account? Sign Up" : "Already have an account? Login"}
                 </Text>
-            </View>
-            <View style={styles.container}>
-
             </View>
         </SafeAreaView>
     )
@@ -184,20 +205,13 @@ const Authentication = () => {
 
 
 const styles = StyleSheet.create({
-    input: {
-        height: 40,
-        borderWidth: 1,
-        marginTop: 5,
-        marginBottom: 5,
-        padding: 10,
-        width: '100%',
-    },
     button: {
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-evenly",
         alignItems: "center",
-        width: "100%",
+        width: "80%",
+        alignSelf: 'center',
         height: 50,
         borderWidth: 1,
         borderColor: "#666",
@@ -207,6 +221,47 @@ const styles = StyleSheet.create({
         color: "#fff",
         fontWeight: "bold",
         fontSize: 20
+    },
+
+    inputView: {
+        width: '80%',
+
+        borderRadius: 10,
+        height: 45,
+        marginBottom: 10,
+        justifyContent: 'center',
+        alignSelf: 'center',
+        padding: 20,
+        borderBottomWidth: 1, // width of the border
+        borderColor: '#000000',
+    },
+    inputText: {
+        height: 50,
+        color: 'black',
+    },
+    loginBtn: {
+        width: '80%',
+        backgroundColor: '#fb5b5a',
+        borderRadius: 25,
+        height: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 40,
+        marginBottom: 10,
+    },
+    loginText: {
+        color: 'white',
+        
+    },
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    ImgLogo: {
+        width: -50,
+        height: 200,
     },
 });
 

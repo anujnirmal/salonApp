@@ -3,7 +3,7 @@ import { SafeAreaView, AsyncStorage, ActivityIndicator, Button, Image, Touchable
 import tw from 'twrnc';
 import firestore from '@react-native-firebase/firestore';
 
-const SelectRole = ({userData, setUserType}) => {
+const SelectRole = ({ userData, setUserType }) => {
     const [loading, setLoading] = React.useState({
         buttonOne: false,
         buttonTwo: false,
@@ -13,18 +13,18 @@ const SelectRole = ({userData, setUserType}) => {
 
         try {
 
-           if(role === "USER"){
-            setLoading({
-                buttonOne: false,
-                buttonTwo: true
-            })
-           }else {
-            setLoading({
-                buttonOne: true,
-                buttonTwo: false
-            })
-           }
-           console.log("Userdata" + userData);
+            if (role === "USER") {
+                setLoading({
+                    buttonOne: false,
+                    buttonTwo: true
+                })
+            } else {
+                setLoading({
+                    buttonOne: true,
+                    buttonTwo: false
+                })
+            }
+            console.log("Userdata" + userData);
             await firestore()
                 .collection('Users').doc(userData.docId)
                 .update({
@@ -35,11 +35,11 @@ const SelectRole = ({userData, setUserType}) => {
                     Alert.alert("Success", "Role Updated");
                 })
 
-                setUserType(role);
-                setLoading({
-                    buttonOne: false,
-                    buttonTwo: false
-                })
+            setUserType(role);
+            setLoading({
+                buttonOne: false,
+                buttonTwo: false
+            })
 
         } catch (error) {
             console.log(error);
@@ -57,6 +57,10 @@ const SelectRole = ({userData, setUserType}) => {
             <View>
 
                 <Text style={tw`text-center text-[14]`}>Register as...</Text>
+                <Image
+                    style={styles.ImgLogo}
+                    source={require('../../assets/logo/salon.png')}
+                />
 
                 <TouchableOpacity onPress={() => setUserRole("SHOPOWNER")}>
                     <View
@@ -71,6 +75,13 @@ const SelectRole = ({userData, setUserType}) => {
                         </Text>
                     </View>
                 </TouchableOpacity>
+
+                {/* <View style={styles.ImgLogo}> */}
+                <Image
+                    style={styles.ImgLogo}
+                    source={require('../../assets/logo/user1.png')}
+                />
+                {/* </View> */}
 
                 <TouchableOpacity onPress={() => setUserRole("USER")} style={tw`mt-2`}>
                     <View
@@ -102,10 +113,11 @@ const styles = StyleSheet.create({
     },
     buttonOne: {
         display: "flex",
+        alignSelf: "center",
         flexDirection: "row",
         justifyContent: "space-evenly",
         alignItems: "center",
-        width: "100%",
+        width: "80%",
         height: 50,
         borderWidth: 1,
         borderColor: "#666",
@@ -113,10 +125,11 @@ const styles = StyleSheet.create({
     },
     buttonTwo: {
         display: "flex",
+        alignSelf: "center",
         flexDirection: "row",
         justifyContent: "space-evenly",
         alignItems: "center",
-        width: "100%",
+        width: "80%",
         height: 50,
         borderWidth: 1,
         borderColor: "#666",
@@ -126,6 +139,14 @@ const styles = StyleSheet.create({
         color: "#fff",
         fontWeight: "bold",
         fontSize: 20
+    },
+    ImgLogo: {
+        alignSelf: "center",
+        width: 160,
+        height: 200,
+        resizeMode: 'contain',
+        marginTop:20,
+
     },
 });
 

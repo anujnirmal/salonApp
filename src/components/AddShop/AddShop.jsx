@@ -12,11 +12,11 @@ import tw from "twrnc";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import Geolocation from "@react-native-community/geolocation";
 import firestore from "@react-native-firebase/firestore";
-import * as ImagePicker from "react-native-image-picker"
+import * as ImagePicker from "react-native-image-picker";
 import storage from "@react-native-firebase/storage";
 import * as Progress from "react-native-progress";
 
-const AddShop = ({ userData }) => {
+const AddShop = ({ userData, setAddShop }) => {
   const [shopDetails, setShopDetails] = React.useState({
     shopName: "",
     address: "",
@@ -58,7 +58,7 @@ const AddShop = ({ userData }) => {
     setMarkers(coordinates);
   };
 
-  const handleConfirmButton = async() => {
+  const handleConfirmButton = async () => {
     console.log("Hello");
     if (markers === null) {
       return Alert.alert("Error", "Please tap on the map to select the map");
@@ -67,36 +67,13 @@ const AddShop = ({ userData }) => {
     setAddMap(false);
   };
 
-  const handleShopToDb = async () => {
-    if (shopDetails.shopName === "") {
-      return Alert.alert("Error", "Please add shop name");
-    }
+  // const handleShopToDb = async () => {
+   
 
-    if (shopDetails.address === "") {
-      return Alert.alert("Error", "Please add address");
-    }
-
-    await uploadImage();
-    // updated in db
-    firestore()
-      .collection("Users")
-      .doc(userData.docId)
-      .update({
-        shops: [
-          {
-            description: shopDetails.address,
-            latitude: shopDetails.latitude,
-            longitude: shopDetails.longitude,
-            shopName: shopDetails.shopName,
-            imageUrl: imageUrl,
-          },
-        ],
-      })
-      .then(() => {
-        console.log("User added!");
-        Alert.alert("Success", "Role Updated");
-      });
-  };
+  //   await uploadImage();
+  //   // updated in db
+    
+  // };
 
   const selectImage = () => {
     const options = {
@@ -108,50 +85,84 @@ const AddShop = ({ userData }) => {
       },
     };
 
-      ImagePicker.launchImageLibrary(options, (response) => {
-        if (response.didCancel) {
-          console.log("User cancelled image picker");
-        } else if (response.error) {
-          console.log("ImagePicker Error: ", response.error);
-        } else if (response.customButton) {
-          console.log("User tapped custom button: ", response.customButton);
-        } else {
-          console.log(response)
-          const source = { uri: response.assets[0].uri };
-          console.log("SOurce is " + JSON.stringify(source));
-          setImage(source);
-        }
-      });
-  
+    ImagePicker.launchImageLibrary(options, (response) => {
+      if (response.didCancel) {
+        console.log("User cancelled image picker");
+      } else if (response.error) {
+        console.log("ImagePicker Error: ", response.error);
+      } else if (response.customButton) {
+        console.log("User tapped custom button: ", response.customButton);
+      } else {
+        console.log(response);
+        const source = { uri: response.assets[0].uri };
+        console.log("SOurce is " + JSON.stringify(source));
+        setImage(source);
+      }
+    });
   };
 
   const handleFormChange = (e, fieldName) => {
     setShopDetails((prevValue) => {
       return {
         ...prevValue,
-        [fieldName]: e
-      }
-    })
-  }
-
-  const uploadImage = async () => {
-    try {
-    //   console.log("Images is " + JSON.stringify(image.uri))
-    // const { uri } = image;
-    // const filename = uri.substring(uri.lastIndexOf("/") + 1);
-    // const uploadUri = Platform.OS === "ios" ? uri.replace("file://", "") : uri;
-    setUploading(true);
-    setTransferred(0);
-    const task = storage().ref("images/").putFile(image?.uri);
-    // set progress state
-    task.on("state_changed", (snapshot) => {
-      setTransferred(
-        Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000
-      );
+        [fieldName]: e,
+      };
     });
-    
-      await task;
-      console.log("task" + task)
+  };
+
+  const handleShopToDb = async () => {
+    try {
+      //   console.log("Images is " + JSON.stringify(image.uri))
+      const { uri } = image;
+      const filename = uri.substring(uri.lastIndexOf("/") + 1);
+      const uploadUri =
+        Platform.OS === "ios" ? uri.replace("file://", "") : uri;
+      setUploading(true);
+      setTransferred(0);
+      const task = storage().ref(filename).putFile(uploadUri);
+      // set progress state
+      task.on("state_changed", (snapshot) => {
+        setTransferred(
+          Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000
+        );
+      });
+
+      await task.then((e) => {
+        storage()
+          .ref(e?.metadata?.fullPath)
+          .getDownloadURL()
+          .then((url) => {
+            // Do something with the URL ...
+            console.log("url " + url);
+            if (shopDetails.shopName === "") {
+              return Alert.alert("Error", "Please add shop name");
+            }
+        
+            if (shopDetails.address === "") {
+              return Alert.alert("Error", "Please add address");
+            }
+
+            firestore()
+      .collection("Users")
+      .doc(userData.docId)
+      .update({
+        shops: [
+          {
+            description: shopDetails.address,
+            latitude: markers.latitude,
+            longitude: markers.longitude,
+            shopName: shopDetails.shopName,
+            imageUrl: url,
+          },
+        ],
+      })
+      .then(() => {
+        console.log("User added!");
+        Alert.alert("Success", "Role Updated");
+        setAddShop(false);
+      });
+          });
+      });
     } catch (e) {
       console.log("Erors" + e);
     }
@@ -165,6 +176,7 @@ const AddShop = ({ userData }) => {
 
   return (
     <>
+    {console.log(imageUrl)}
       {!addMap ? (
         <View style={tw`mt-30 w-full h-full`}>
           <Text style={tw`text-center text-[5]`}>Add Shop Details</Text>
@@ -186,29 +198,24 @@ const AddShop = ({ userData }) => {
               title={markers ? "Change Shop location" : "Add Shop Location"}
             />
           </View>
+          <View>
+          {uploading && (
+                <View style={styles.progressBarContainer}>
+                  <Progress.Bar progress={transferred} width={300} />
+                </View>
+              ) }
+          </View>
           <View style={tw`mt-20 w-full`}>
             <Button onPress={() => handleShopToDb()} title="Add Shop to map" />
           </View>
           <View>
-          <TouchableOpacity style={styles.selectButton} onPress={selectImage}>
-            <Text style={styles.buttonText}>Pick an image</Text>
-          </TouchableOpacity>
-          <View style={styles.imageContainer}>
-            {uploading ? (
-              <View style={styles.progressBarContainer}>
-                <Progress.Bar progress={transferred} width={300} />
-              </View>
-            ) : (
-              <TouchableOpacity
-                style={styles.uploadButton}
-                onPress={uploadImage}
-              >
-                <Text style={styles.buttonText}>Upload image</Text>
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity style={styles.selectButton} onPress={selectImage}>
+              <Text style={styles.buttonText}>Pick an image</Text>
+            </TouchableOpacity>
+            <View style={styles.imageContainer}>
+              
+            </View>
           </View>
-          </View>
-         
         </View>
       ) : (
         <View style={tw`w-full`}>
@@ -278,43 +285,43 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    alignItems: 'center',
-    backgroundColor: '#bbded6'
+    alignItems: "center",
+    backgroundColor: "#bbded6",
   },
   selectButton: {
     borderRadius: 5,
     width: 150,
     height: 50,
-    backgroundColor: '#8ac6d1',
-    alignItems: 'center',
-    justifyContent: 'center'
+    backgroundColor: "#8ac6d1",
+    alignItems: "center",
+    justifyContent: "center",
   },
   uploadButton: {
     borderRadius: 5,
     width: 150,
     height: 50,
-    backgroundColor: '#ffb6b9',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 20
+    backgroundColor: "#ffb6b9",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 20,
   },
   buttonText: {
-    color: 'white',
+    color: "white",
     fontSize: 18,
-    fontWeight: 'bold'
+    fontWeight: "bold",
   },
   Container: {
     marginTop: 30,
     marginBottom: 50,
-    alignItems: 'center'
+    alignItems: "center",
   },
   progressBarContainer: {
-    marginTop: 20
+    marginTop: 20,
   },
   imageBox: {
     width: 300,
-    height: 300
-  }
+    height: 300,
+  },
 });
 
 export default AddShop;

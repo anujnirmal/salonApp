@@ -20,7 +20,7 @@ import {
 
 const OwnerDashBoard = ({ userData }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [addShop, setAddShop] = useState(false);
+  const [addShop, setAddShop] = useState(true);
   const drawer = useRef(null);
   const [drawerPosition, setDrawerPosition] = useState("left");
   const [markers, setMarkers] = useState([]);
@@ -51,7 +51,7 @@ const OwnerDashBoard = ({ userData }) => {
 
   const checkIfUserHasShop = () => {
     for (const key in userData?.user) {
-      console.log(key)
+      console.log("Here" + key)
       if(key === "shops"){
         setAddShop(true);
       }
@@ -169,7 +169,7 @@ const OwnerDashBoard = ({ userData }) => {
           </View>
         </View>
         {addShop ? 
-          <AddShop userData={userData} />
+          <AddShop userData={userData} setAddShop={setAddShop}/>
         :
         <View style={tw`mt-25`}>
         <Button title="Rammohan nalla"/>

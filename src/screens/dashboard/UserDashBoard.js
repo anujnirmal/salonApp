@@ -69,8 +69,8 @@ const UserDashboard = ({ userData }) => {
                     for (let i = 0; i < userData?.docs.length; i++) {
 
                         let shopOwners = {
-                            shopOwnerId: userData?.docs[i].id,
-                            ...userData.docs[i]._data,
+                            shopOwnerId: userData?.docs[i]?.id,
+                            ...userData.docs[i]?._data,
                         }
 
                         setMarkers(oldArray => [...oldArray, shopOwners])
@@ -212,6 +212,8 @@ const UserDashboard = ({ userData }) => {
                         {markers.map((marker, index) => {
                             return <View key={index}>
                                 {marker?.shops?.map((shop, index) => {
+                                    console.log(shop.latitude);
+                                    console.log(shop.longitude);
                                     return <Marker
                                         coordinate={{ latitude: shop.latitude, longitude: shop.longitude }}
                                         title={shop.shopName}

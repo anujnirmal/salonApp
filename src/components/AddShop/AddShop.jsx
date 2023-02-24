@@ -67,14 +67,6 @@ const AddShop = ({ userData, setAddShop }) => {
     setAddMap(false);
   };
 
-  // const handleShopToDb = async () => {
-   
-
-  //   await uploadImage();
-  //   // updated in db
-    
-  // };
-
   const selectImage = () => {
     const options = {
       maxWidth: 2000,

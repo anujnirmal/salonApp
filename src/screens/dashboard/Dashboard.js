@@ -6,7 +6,7 @@ import SelectRole from '../selectRole/SelectRole';
 import UserDashboard from './UserDashBoard';
 import OwnerDashboard from "./OwnerDashboard";
 
-const Dashboard = ({ user,  }) => {
+const Dashboard = ({ user }) => {
 
   const [userData, setUserData] = React.useState({});
   const [userType, setUserType] = React.useState(null);
@@ -20,9 +20,9 @@ const Dashboard = ({ user,  }) => {
       await firestore()
         .collection('Users').where('emailId', '==', user.email).get()
         .then(async (userData) => {
-
-          let tempUserData = userData.docs[0]._data;
-          let docId = userData.docs[0].id;
+          console.log(userData)
+          let tempUserData = userData?.docs[0]?._data;
+          let docId = userData?.docs[0]?.id;
           setUserData((prevValue) => {
             return {
               googleUserData: user,
@@ -30,7 +30,7 @@ const Dashboard = ({ user,  }) => {
               docId: docId,
             }
           })
-          setUserType(tempUserData.role)
+          setUserType(tempUserData?.role)
         })
 
     } catch (error) {

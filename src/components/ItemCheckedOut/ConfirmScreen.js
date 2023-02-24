@@ -15,6 +15,8 @@ const ConfirmScreen = ({ date, itemsList, selectedShop, userData, closeBookServi
       .add({
         shopOwnerId: selectedShop.shopOwnerId,
         userId: userData.docId,
+        clientName: userData?.user?.userName,
+        emailId: userData?.user?.emailId,
         services: itemsList,
         price: price,
         time: time,
@@ -41,7 +43,7 @@ const ConfirmScreen = ({ date, itemsList, selectedShop, userData, closeBookServi
   
       <View style={tw`w-full h-full`}>
         <Text style={tw`text-center mt-8 text-lg text-white`}>
-          {console.log(userData.docId)}
+          {console.log(userData)}
           Confirm Appointment
         </Text>
         <Text style={tw`mt-10 pl-2 text-[5]`}>Total Price: {price}</Text>

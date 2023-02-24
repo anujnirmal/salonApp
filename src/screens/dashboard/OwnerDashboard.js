@@ -17,15 +17,19 @@ import {
   Modal,
   Image,
 } from "react-native";
+import AddService from "../../components/AddService/AddService";
+import Appointments from "../../components/Appointments/Appointments";
 
 const OwnerDashBoard = ({ userData }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [addShop, setAddShop] = useState(true);
+  const [addShop, setAddShop] = useState();
   const drawer = useRef(null);
   const [drawerPosition, setDrawerPosition] = useState("left");
   const [markers, setMarkers] = useState([]);
   const [selectedShop, setSelectedShop] = useState(null);
   const [bookService, setBookService] = useState(false);
+  const [appointments, setAppointments] = useState(false);
+  const [dashboard, setDashboard] = useState(true)
   const [position, setPosition] = useState({
     latitude: 10,
     longitude: 10,
@@ -53,7 +57,7 @@ const OwnerDashBoard = ({ userData }) => {
     for (const key in userData?.user) {
       console.log("Here" + key)
       if(key === "shops"){
-        setAddShop(true);
+        setAddShop(false);
       }
     }
   }
@@ -78,8 +82,8 @@ const OwnerDashBoard = ({ userData }) => {
         .then(async (userData) => {
           for (let i = 0; i < userData?.docs.length; i++) {
             let shopOwners = {
-              shopOwnerId: userData?.docs[i].id,
-              ...userData.docs[i]._data,
+              shopOwnerId: userData?.docs[i]?.id,
+              ...userData.docs[i]?._data,
             };
 
             setMarkers((oldArray) => [...oldArray, shopOwners]);
@@ -101,6 +105,16 @@ const OwnerDashBoard = ({ userData }) => {
     setBookService(true);
   };
 
+  const handleDashboardClick = () => {
+    setAppointments(false);
+    setDashboard(true);
+  }
+
+  const handleAppointmentClick = () => {
+    setDashboard(false);
+    setAppointments(true);
+  }
+
   const navigationView = () => (
     <View style={[styles.container, styles.navigationContainer]}>
       {/* Add Image */}
@@ -120,22 +134,22 @@ const OwnerDashBoard = ({ userData }) => {
           <Pressable
             style={styles.button}
             onPress={() => {
-              console.log("hiiiiiiiiii");
+              handleDashboardClick()
             }}
           >
             {console.log(userData.user)}
-            <Text style={styles.text}>Profile</Text>
+            <Text style={styles.text}>Dashboard</Text>
           </Pressable>
         </View>
         <View style={tw`mb-4`}>
-          <Pressable style={styles.button}>
+          <Pressable onPress={() => handleAppointmentClick()} style={styles.button}>
             <Text style={styles.text}>Appointments</Text>
           </Pressable>
         </View>
 
         <View style={tw`mb-4`}>
           <Pressable style={styles.button}>
-            <Text style={styles.text}>About Us</Text>
+            <Text style={styles.text}>My Services</Text>
           </Pressable>
         </View>
         <View style={tw`mb-4`}>
@@ -168,15 +182,19 @@ const OwnerDashBoard = ({ userData }) => {
             </View>
           </View>
         </View>
-        {addShop ? 
-          <AddShop userData={userData} setAddShop={setAddShop}/>
-        :
-        <View style={tw`mt-25`}>
-        <Button title="Rammohan nalla"/>
-      </View>
-      }
-
+        {/* Dashboard screen */}
+        {dashboard && 
+        <>
+           {addShop ? 
+            <AddShop userData={userData} setAddShop={setAddShop}/>
+          :
+          <AddService userData={userData}/>
+        }
+        </>
+        }
       
+      {/* Appointment screen */}
+      {appointments && <Appointments userData={userData}/>}
         
       </View>
     </DrawerLayoutAndroid>
